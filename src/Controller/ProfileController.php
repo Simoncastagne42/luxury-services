@@ -43,10 +43,22 @@ final class ProfileController extends AbstractController
             // dd($candidate);
             $profilPictureFile = $formCandidate->get('profilePictureFile')->getData();
             // dd($profilPictureFile);
+            $passportFile = $formCandidate->get('passportFile')->getData();
+            $cvFile = $formCandidate->get('cvFile')->getData();
 
             if($profilPictureFile){
                 $profilPictureName = $fileUploader->upload($profilPictureFile, $candidate, 'profilePicture', 'profile_pictures');
                 $candidate->setProfilePicture($profilPictureName);
+            }
+
+            if ($passportFile) {
+                $passportName = $fileUploader->upload($passportFile, $candidate, 'passport', 'passport');
+                $candidate->setPassport($passportName);
+            }
+
+            if ($cvFile) {
+                $cvName = $fileUploader->upload($cvFile, $candidate, 'cv', 'cv');
+                $candidate->setCv($cvName);
             }
 
             $entityManager->persist($candidate);
