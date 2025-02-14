@@ -1,12 +1,8 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Recruiter;
 
-use App\Entity\Category;
-use App\Entity\Experience;
-use App\Entity\Gender;
-use App\Entity\Recruiter;
-use App\Entity\User;
+use App\Entity\JobOffers;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -14,13 +10,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[AdminDashboard(routePath: '/admin', routeName: 'admin')]
-class DashboardController extends AbstractDashboardController
+#[AdminDashboard(routePath: '/recruiter', routeName: 'recruiter')]
+class RecruiterDashboardController extends AbstractDashboardController
 {
-    #[Route('/admin')]
+    #[Route('/recruiter',name: 'app_recruiter')]
     public function index(): Response
     {
-        // return parent::index();
+      
 
         // Option 1. You can make your dashboard redirect to some common page of your backend
         //
@@ -40,7 +36,8 @@ class DashboardController extends AbstractDashboardController
         // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
         // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
         //
-        return $this->render('admin/dashboard.html.twig');
+        // return $this->render('some/path/my-dashboard.html.twig');
+        return $this->render('recruiter/dashboard.html.twig');
     }
 
     public function configureDashboard(): Dashboard
@@ -53,20 +50,9 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-tachometer-alt');
-        
-        yield MenuItem::section('Users');
-        yield MenuItem::linkToCrud('Users', 'fas fa-user-tie', User::class);
-
+    
         yield MenuItem::section('Jobs');
-        yield MenuItem::linkToCrud('Category', 'fa-solid fa-list', Category::class);
-
-
-        yield MenuItem::section('Candidates');
-        yield MenuItem::linkToCrud('Genders', 'fas fa-venus-mars', Gender::class);
-        yield MenuItem::linkToCrud('Experience', 'fa-solid fa-vial', Experience::class);
-        
-        
-        yield MenuItem::section('Recruiters');
-        yield MenuItem::linkToCrud('Recruiters', 'fas fa-user-tie', Recruiter::class);
+        yield MenuItem::linkToCrud('Offers','fa-solid fa-briefcase', JobOffers::class);
+       
     }
 }

@@ -7,8 +7,7 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Annotation\IgnoreCompletion;
-use Doctrine\Common\Annotations\AnnotationReader;
+use App\Attribute\ProfileField;
 
 #[ORM\Entity(repositoryClass: CandidateRepository::class)]
 class Candidate
@@ -16,75 +15,87 @@ class Candidate
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[IgnoreCompletion]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[ProfileField()]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
-    #[IgnoreCompletion]
+    #[ProfileField()]
     private ?string $profilePicture = null;
 
     #[ORM\OneToOne(inversedBy: 'candidate', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[IgnoreCompletion]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'candidates')]
+    #[ProfileField()]
     private ?Gender $gender = null;
 
     #[ORM\Column]
     #[Assert\NotNull]
-    #[IgnoreCompletion]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     #[Assert\NotNull]
-    #[IgnoreCompletion]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(nullable: true)]
-    #[IgnoreCompletion]
     private ?\DateTimeImmutable $deletedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $adress = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $country = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $nationality = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    #[ProfileField()]
     private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $birthPlace = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $passport = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $currentLocation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $cv = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[ProfileField()]
     private ?string $description = null;
 
     #[ORM\ManyToOne(inversedBy: 'candidates')]
+    #[ProfileField()]
     private ?Category $jobCategory = null;
 
     #[ORM\ManyToOne(inversedBy: 'candidates')]
+    #[ProfileField()]
     private ?Experience $experience = null;
+
+    #[ORM\Column(type: Types::INTEGER, options: ['default' => 0])]
+    private ?int $completionPercentage = 0;
 
 
     public function __construct(DateTimeImmutable $createdAt = new DateTimeImmutable(), DateTimeImmutable $updatedAt = new DateTimeImmutable())
@@ -326,47 +337,17 @@ class Candidate
         return $this;
     }
 
-    public function getProfileCompletion(): int
+    public function getCompletionPercentage(): ?int
     {
-        $ignoredFields = $this->getIgnoredFields();
-
-        $reflection = new \ReflectionClass($this);
-        $properties = $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED);
-
-        $totalFields = 0;
-        $filledFields = 0;
-
-        foreach ($properties as $property) {
-            $name = $property->getName();
-
-            if (!in_array($name, $ignoredFields)) {
-                $totalFields++;
-                $value = $property->getValue($this);
-                if (!empty($value)) {
-                    $filledFields++;
-                }
-            }
-        }
-
-        return $totalFields > 0 ? intval(($filledFields / $totalFields) * 100) : 0;
+        return $this->completionPercentage;
     }
 
-    private function getIgnoredFields(): array
+    public function setCompletionPercentage(int $completionPercentage): static
     {
-        $ignoredFields = [];
-        $reflection = new \ReflectionClass($this);
-        $properties = $reflection->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED);
+        $this->completionPercentage = $completionPercentage;
 
-        foreach ($properties as $property) {
-            $reader = new AnnotationReader();
-            $annotations = $reader->getPropertyAnnotations($property);
-            foreach ($annotations as $annotation) {
-                if ($annotation instanceof IgnoreCompletion) {
-                    $ignoredFields[] = $property->getName();
-                }
-            }
-        }
-
-        return $ignoredFields;
+        return $this;
     }
+
+
 }
