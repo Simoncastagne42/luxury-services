@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Entity\Category;
 use App\Entity\Experience;
 use App\Entity\Gender;
-use App\Entity\Recruiter;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -17,7 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AdminDashboard(routePath: '/admin', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-    #[Route('/admin')]
+    #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
         // return parent::index();
@@ -53,20 +52,21 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-tachometer-alt');
-        
-        yield MenuItem::section('Users');
-        yield MenuItem::linkToCrud('Users', 'fas fa-user-tie', User::class);
 
         yield MenuItem::section('Jobs');
-        yield MenuItem::linkToCrud('Category', 'fa-solid fa-list', Category::class);
 
+    
+        yield MenuItem::linkToCrud('Categories', 'fa-solid fa-list', Category::class);
 
         yield MenuItem::section('Candidates');
+
+        // TODO
+        // yield MenuItem::linkToCrud('Candidates', 'fa fa-users', Candidate::class);
+        yield MenuItem::linkToCrud('Experiences', 'fas fa-chart-line', Experience::class);
         yield MenuItem::linkToCrud('Genders', 'fas fa-venus-mars', Gender::class);
-        yield MenuItem::linkToCrud('Experience', 'fa-solid fa-vial', Experience::class);
-        
-        
+
         yield MenuItem::section('Recruiters');
-        yield MenuItem::linkToCrud('Recruiters', 'fas fa-user-tie', Recruiter::class);
+
+        yield MenuItem::linkToCrud('Recruiters', 'fa fa-user-tie', User::class);
     }
 }

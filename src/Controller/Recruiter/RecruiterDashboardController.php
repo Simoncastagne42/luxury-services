@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[AdminDashboard(routePath: '/recruiter', routeName: 'recruiter')]
 class RecruiterDashboardController extends AbstractDashboardController
 {
-    #[Route('/recruiter',name: 'app_recruiter')]
+    #[Route('/recruiter',name: 'recruiter')]
     public function index(): Response
     {
       
