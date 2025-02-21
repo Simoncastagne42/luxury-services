@@ -14,8 +14,9 @@ class JobOffers
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $recruiterId = null;
+    #[ORM\ManyToOne(targetEntity: Recruiter::class, inversedBy: 'jobOffers')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Recruiter $recruiter = null;
 
     #[ORM\Column(length: 255)]
     private ?string $jobTittle = null;
@@ -36,23 +37,23 @@ class JobOffers
     private ?\DateTimeImmutable $dateCreated = null;
 
 
+
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getRecruiterId(): ?int
+    public function getRecruiter(): ?Recruiter
     {
-        return $this->recruiterId;
+        return $this->recruiter;
     }
 
-    public function setRecruiterId(int $recruiterId): static
+    public function setRecruiter(?Recruiter $recruiter): self
     {
-        $this->recruiterId = $recruiterId;
-
+        $this->recruiter = $recruiter;
         return $this;
     }
-
     public function getJobTittle(): ?string
     {
         return $this->jobTittle;
@@ -112,6 +113,12 @@ class JobOffers
 
         return $this;
     }
+
+    public function __construct()
+    {
+        $this->dateCreated = new \DateTimeImmutable(); // Définit la date actuelle par défaut
+    }
+    
 
     public function getDateCreated(): ?\DateTimeImmutable
     {
